@@ -55,5 +55,5 @@ p{margin:8px 0 12px}
 .muted{color:var(--muted)}
 
 @media print{
-  details{open:open}
+  details[open]{display:block}
 }
