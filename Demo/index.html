@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel İskeleti + Ürünler (Modüler)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="product.css" />
+  </head>
+  <body>
+    <!-- ÜST BAR -->
+    <header class="topbar">
+      <div class="t-left">
+        <span class="logo" id="storeLogo" title="Şirket Logosu"></span>
+        <span class="muted small">Şirket</span>
+      </div>
+      <div class="t-center">
+        <span class="brandmark" title="Site İşareti"></span>
+        <span class="title">SİTE ADI / LOGO</span>
+      </div>
+      <div class="t-right">
+        <div class="user-menu" id="userMenu">
+          <div
+            class="user-toggle"
+            tabindex="0"
+            role="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <span class="avatar" title="Kullanıcı"></span>
+            <div class="stack">
+              <strong class="small">Kullanıcı Adı</strong>
+              <span class="tiny muted">Rol • Şube</span>
+            </div>
+          </div>
+          <div class="user-dropdown" role="menu" aria-label="Kullanıcı Menüsü">
+            <a href="#" role="menuitem">Hesap Bilgileri</a>
+            <a href="#" role="menuitem">Parola Değiştir</a>
+            <a href="#" role="menuitem">Profil Ayarları</a>
+            <a href="#" role="menuitem" class="danger">Çıkış Yap</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SOL MENÜ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="side-head">
+        <button
+          class="toggle"
+          id="toggleBtn"
+          aria-expanded="false"
+          aria-controls="sidebar"
+          type="button"
+        >
+          ☰
+        </button>
+        <span class="lbl tiny muted">Menü</span>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <a class="item" data-tab="magaza" href="#"
+              ><span class="ico">🏪</span><span class="lbl">Mağaza</span></a
+            >
+          </li>
+          <li>
+            <a class="item" data-tab="siparisler" href="#"
+              ><span class="ico">📦</span><span class="lbl">Siparişler</span></a
+            >
+          </li>
+          <li>
+            <a class="item" data-tab="musteriler" href="#"
+              ><span class="ico">👥</span><span class="lbl">Müşteriler</span></a
+            >
+          </li>
+          <li>
+            <a class="item" data-tab="raporlar" href="#"
+              ><span class="ico">📊</span><span class="lbl">Raporlar</span></a
+            >
+          </li>
+          <li>
+            <a class="item" data-tab="stoklar" href="#"
+              ><span class="ico">📁</span><span class="lbl">Stoklar</span></a
+            >
+          </li>
+          <li>
+            <a class="item" data-tab="ayarlar" href="#"
+              ><span class="ico">⚙️</span><span class="lbl">Ayarlar</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- İÇERİK -->
+    <main class="content" id="content">
+      <div class="inner">
+        <!-- Üst tab çubuğu -->
+        <div class="card">
+          <div class="row split">
+            <div class="tabs" id="mainTabs">
+              <span class="pill active" data-tab="magaza">Mağaza</span>
+              <span class="pill" data-tab="siparisler">Siparişler</span>
+              <span class="pill" data-tab="musteriler">Müşteriler</span>
+            </div>
+
+            <div class="row">
+              <span class="muted tiny">Rol:</span>
+              <select id="roleSelect" class="select">
+                <option value="perakende">Perakende</option>
+                <option value="satici-perakende" selected>
+                  Satıcı (Perakende)
+                </option>
+              </select>
+              <span class="muted tiny">Müşteri etiketi:</span>
+              <select id="custTagSelect" class="select">
+                <option value="public" selected>public</option>
+                <option value="tier:pro">tier:pro</option>
+                <option value="tier:vip">tier:vip</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Alt tab çubuğu -->
+          <div class="subtabs" id="subTabs" style="display: flex"></div>
+        </div>
+
+        <!-- Dinamik içerik -->
+        <div id="view">
+          <div id="grid" class="product-grid"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ALT BAR -->
+    <footer class="bottombar">
+      <span>Özet:</span>
+      <span class="pill">Bekleyen: 12</span>
+      <span class="pill">Hazırlanan: 5</span>
+      <span class="pill">Stok Uyarısı: 3</span>
+    </footer>
+
+    <!-- === Yeni Ürün Modal (HTML) === -->
+    <div class="cp-modal" id="cpModal" aria-hidden="true">
+      <div class="cp-dialog" role="dialog" aria-labelledby="cpTitle">
+        <div class="cp-head">
+          <h3 id="cpTitle">Yeni Ürün</h3>
+          <div class="row">
+            <button class="cp-btn secondary" type="button" id="cpReset">
+              Temizle
+            </button>
+            <button class="cp-btn" type="button" id="cpSave">Ekle</button>
+            <button class="cp-btn secondary" type="button" id="cpVisRules">
+              Görünürlük Kuralları
+            </button>
+            <button class="cp-btn secondary" type="button" id="cpClose">
+              İptal
+            </button>
+          </div>
+        </div>
+
+        <div class="cp-body">
+          <!-- FOTOĞRAF -->
+          <div class="row">
+            <div class="cp-field" style="max-width: 280px">
+              <label class="cp-label">Fotoğraf</label>
+              <input
+                class="cp-input"
+                id="cp_image"
+                type="file"
+                accept="image/*"
+              />
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Önizleme</label>
+              <div class="cp-thumb" id="cp_thumb">
+                <span>Görsel seçilmedi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TEMEL -->
+          <div class="cp-grid mtop">
+            <div class="cp-field">
+              <label class="cp-label"
+                >Ürün Adı <span class="cp-badge">Zorunlu</span></label
+              >
+              <input
+                class="cp-input"
+                id="cp_name"
+                placeholder="Örn: Kenya AA"
+                required
+              />
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Ürün Kodu (SKU)</label>
+              <input
+                class="cp-input"
+                id="cp_sku"
+                placeholder="Örn: KNY-AA-250"
+              />
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Kategori</label>
+              <input
+                class="cp-input"
+                id="cp_category"
+                placeholder="Örn: Kahve"
+              />
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Tür</label>
+              <input class="cp-input" id="cp_type" placeholder="Örn: Filtre" />
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Birim</label>
+              <div class="row">
+                <select class="cp-select" id="cp_unit" style="min-width: 120px">
+                  <option value="">Seçin</option>
+                  <option value="adet">Adet</option>
+                  <option value="paket">Paket</option>
+                  <option value="koli">Koli</option>
+                  <option value="g">Gram (g)</option>
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="ml">Mililitre (ml)</option>
+                  <option value="l">Litre (L)</option>
+                </select>
+                <!--<input class="cp-input" id="cp_unit_value" type="number" step="0.01" min="0" placeholder="Örn 250" />-->
+              </div>
+            </div>
+            <div class="cp-field">
+              <label class="cp-label">Para Birimi</label>
+              <select class="cp-select" id="cp_currency">
+                <option value="TRY" selected>TRY</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- AÇIKLAMA -->
+          <div class="cp-field mtop">
+            <label class="cp-label">Açıklama</label>
+            <textarea
+              class="cp-textarea"
+              id="cp_desc"
+              placeholder="Ürün açıklaması"
+            ></textarea>
+          </div>
+
+          <!-- ÜRÜN EK ALANLARI -->
+          <div class="cp-hr"></div>
+          <div class="row between">
+            <h3 class="h5">Ek Alanlar</h3>
+            <button class="cp-btn ghost" type="button" id="cpAddProductField">
+              + Alan Ekle
+            </button>
+          </div>
+          <div id="cpProductFields"></div>
+
+          <!-- SEÇENEKLER -->
+          <div class="cp-hr"></div>
+          <h3 class="h5">Seçenekler (Varyantlar)</h3>
+          <table class="cp-table" id="cpVariantsTable" aria-label="Varyantlar">
+            <thead>
+              <tr>
+                <th>Adı</th>
+                <th>Miktarı</th>
+                <th>Fiyat</th>
+                <th>Stok</th>
+                <th>Alanlar</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row mtop">
+            <button class="cp-btn ghost" type="button" id="cpAddVariant">
+              + Seçenek Ekle
+            </button>
+            <button class="cp-btn secondary" type="button" id="cpPresetCoffee">
+              250 g / 500 g / 1000 g
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Görünürlük Kuralları Paneli -->
+    <div class="cp-visor" id="cpVisor" aria-hidden="true">
+      <div class="box">
+        <div class="head">
+          <strong>Görünürlük Kuralları</strong>
+          <div class="row">
+            <button class="cp-btn secondary" id="cpVisorClose" type="button">
+              Kapat
+            </button>
+            <button class="cp-btn" id="cpVisorApply" type="button">
+              Uygula
+            </button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="muted tiny" style="margin-bottom: 8px">
+            Alan için: Görünür / Gizli / Özel (firma+özel değer)
+          </div>
+          <div id="cpVisorList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="products.js"></script>
+    <script src="modal.js"></script>
+  </body>
+</html>

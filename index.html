@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sipariş Platformu Dokümanı</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sipariş Platformu Dokümanı</h1>
+    </header>
+
+    <main class="wrap">
+      <!-- 1 -->
+      <details id="amac-kapsam" open>
+        <summary>1. Amaç ve Kapsam</summary>
+        <div class="content">
+          <p>
+            Bu sistemin amacı, tüm toptan ve perakende satıcıları buluşturan,
+            iletişimi ve sipariş yönetimini tek bir platformda toplayan modern
+            bir yapı oluşturmaktır. Günümüzde birçok işletme hâlâ siparişlerini
+            WhatsApp, telefon veya e-posta gibi dağınık iletişim kanalları
+            üzerinden yürütmektedir. Bu yöntemler;
+          </p>
+          <ul>
+            <li>
+              Sipariş sürecinde karışıklığa, zaman kaybına ve bilgi eksikliğine
+              neden olmakta,
+            </li>
+            <li>İletişimi kişiye bağımlı hale getirmekte,</li>
+            <li>Doğru bilgiye doğru zamanda ulaşmayı zorlaştırmakta,</li>
+            <li>
+              Sipariş kayıtlarının düzenli tutulmaması sebebiyle işletmelerin
+              geçmişe dönük analiz yapamamasına yol açmaktadır.
+            </li>
+          </ul>
+
+          <p>
+            Ayrıca satın almacıların müşteri portföylerinin kişisel düzeyde
+            tutulması, personel değişimlerinde bilgi kaybı yaratmakta; sipariş
+            verenlerin de kendi siparişlerini farklı kanallarda dağınık biçimde
+            takip etmesine sebep olmaktadır. Bu sorunlar, hem toptan hem de
+            perakende tarafında verimsiz bir sipariş döngüsü doğurmaktadır.
+          </p>
+
+          <hr class="sep" />
+
+          <p>
+            <strong>Bu proje</strong>, tüm bu problemlere çözüm getirmeyi
+            hedefleyen, sipariş odaklı bir platformdur. Sistem şu hedeflerle
+            tasarlanmıştır:
+          </p>
+          <ul>
+            <li>
+              Her ölçekten işletmenin tüm siparişlerini tek merkezden
+              yönetebilmesi,
+            </li>
+            <li>
+              Stok ve fiyat bilgilerine toptancı izin verdiği derecede anlık
+              olarak erişebilmesi,
+            </li>
+            <li>Sipariş durumlarını gerçek zamanlı takip edebilmesi,</li>
+            <li>
+              Toptancılar için stok ve satış analizleri sunarak operasyonlarını
+              optimize edebilmesi,
+            </li>
+            <li>
+              Reklam ve tanıtım modülleri sayesinde müşteri ağını
+              genişletebilmesi,
+            </li>
+            <li>
+              Personel değişimlerinden bağımsız, kurumsal bir sipariş ağı
+              oluşturabilmesi.
+            </li>
+          </ul>
+
+          <p>
+            Ayrıca sistem, geçmiş veriler üzerinden analiz ve raporlama
+            yapılabilmesini, belirli eşik değerlerinde uyarı ve hatırlatmalar
+            oluşturulmasını, ve isteğe bağlı olarak ek modüllerle personel
+            yönetimi gibi özelliklerin entegre edilebilmesini destekler.
+          </p>
+
+          <p>
+            <em>Tasarımın temel ilkesi</em>, sade, odaklı ve deneyimsiz
+            kullanıcıların bile rahatlıkla kullanabileceği bir arayüzdür.
+            Gereksiz karmaşadan uzak, yalnızca kullanıcının mevcut görevine
+            odaklanmasını sağlayan bir deneyim hedeflenmiştir.
+          </p>
+        </div>
+      </details>
+
+      <!-- 2 -->
+      <details id="roller-rbac">
+        <summary>2. Roller (RBAC)</summary>
+        <div class="content">
+          <p>
+            Roller; arayüzde görülecek modülleri ve yapılabilecek işlemleri
+            belirler. Yapı, <strong>RBAC</strong> prensibine göre
+            tasarlanmıştır.
+          </p>
+
+          <details id="roller-ve-yetkileri" open>
+            <summary>2.1 Roller ve Yetkileri</summary>
+            <div class="content">
+              <details>
+                <summary>Firma Yöneticisi</summary>
+                <div class="content">
+                  <ul>
+                    <li>Kullanıcı/lisans/modül yönetimi,</li>
+                    <li>Müşteri onayları, stok &amp; fiyat güncellemeleri.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details>
+                <summary>Firma Satın Alma Yetkilisi</summary>
+                <div class="content">
+                  <ul>
+                    <li>Ürün/stok girişi ve fiyat düzenlemeleri,</li>
+                    <li>Siparişleri görüntüleme, analiz ve onay.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details>
+                <summary>Firma Personeli</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Depo:</strong> Sipariş &amp; stok görüntüleme,
+                    </li>
+                    <li>
+                      <strong>Dağıtım:</strong> “Teslim edildi” işaretleme,
+                    </li>
+                    <li>
+                      <strong>Üretim:</strong> Stok görüntüleme &amp; ürün
+                      girişi.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details>
+                <summary>Firma Alt Yöneticisi</summary>
+                <div class="content">
+                  <ul>
+                    <li>Şube düzeyinde sipariş ve stok yönetimi.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details>
+                <summary>Perakende Kullanıcı</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      Toptancılara abonelik, stok/fiyat görüntüleme, sipariş
+                      verme ve takip.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <!-- 3 -->
+      <details id="icerikler">
+        <summary>3. İçerikler / Bölümler</summary>
+        <div class="content">
+          <!-- 3.1 -->
+          <details id="magaza" open>
+            <summary>3.1 Mağaza Bölümü</summary>
+            <div class="content">
+              <details id="alici">
+                <summary>3.1.1 Alıcı Modu</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Abonelikler:</strong> Kullanıcının abone olduğu
+                      şirketler listelenir.
+                    </li>
+                    <li>
+                      <strong>Kategoriler:</strong> Şirketler kategori bazında
+                      listelenebilir veya filtrelenebilir.
+                    </li>
+                    <li>
+                      <strong>Şirket Sayfası:</strong> Tıklanan şirket, kendi
+                      ürün listesini ayrı sayfa gibi gösterir.
+                    </li>
+                    <li>
+                      <strong>Sipariş:</strong> Ürün kartlarından sepete ekleme
+                      → gözden geçirme → onay akışı.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="satici">
+                <summary>3.1.2 Satıcı Modu</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Ürün Listem:</strong> Satıcının kendi ürünlerini
+                      listeler.
+                    </li>
+                    <li>
+                      <strong>Yeni Ürün / Düzenle:</strong> Ad, görsel, varyant,
+                      fiyat, stok gibi alanlar düzenlenebilir.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="urun-karti" open>
+                <summary>3.1.3 Ürün Kartı</summary>
+                <div class="content">
+                  <details id="urun-karti-temel">
+                    <summary>3.1.3.1 Temel Yapı</summary>
+                    <div class="content">
+                      <ul>
+                        <li>
+                          <strong>Görsel:</strong> Ürüne ait kapak görseli
+                          (opsiyonel çoklu görsel desteği).
+                        </li>
+                        <li><strong>İsim:</strong> Ürün adı.</li>
+                        <li>
+                          <strong>Satın Alınabilir Seçenekler:</strong>
+                          <p>
+                            Her ürün bir veya birden fazla seçeneğe (varyant,
+                            ölçü, paket, öğütme vb.) sahip olabilir. Her
+                            seçeneğin aşağıdaki alanları bulunur:
+                          </p>
+                          <ul>
+                            <li>
+                              <strong>Ad:</strong> Seçeneğin adı (ör. “250 g
+                              Orta Kavrulmuş”).
+                            </li>
+                            <li>
+                              <strong>Birim Değeri:</strong> Seçeneğin ölçüsü
+                              veya birimi (ör. 250 g, 1 kg, 1 adet).
+                            </li>
+                            <li>
+                              <strong>Fiyat:</strong> Seçeneğe ait satış fiyatı.
+                            </li>
+                            <li>
+                              <strong>Stok:</strong> Mevcut stok miktarı.
+                              <em
+                                >Bu alan gizlenebilir ancak stok takibi için
+                                girilmelidir.</em
+                              >
+                            </li>
+                          </ul>
+                          <p>
+                            Her seçenek için görünürlük “gizli”, “görünür” veya
+                            “özel” olarak ayarlanabilir. Görünürlük ayarı
+                            seçeneğin kullanıcıya gösterilip gösterilmeyeceğini
+                            belirler.
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                  </details>
+
+                  <details id="urun-karti-alan-kural">
+                    <summary>3.1.3.2 Alanlar &amp; Kurallar</summary>
+                    <div class="content">
+                      <p>
+                        Ürün bilgisi ve seçenek alanları ürün oluşturma
+                        sırasında özgürce tanımlanabilir.
+                      </p>
+                      <ul>
+                        <li>
+                          <strong>Alan Türleri:</strong> Metin, sayı, seçim
+                          (tek/çoklu), ölçü, fiyat, stok, etiket, anahtar/değer.
+                        </li>
+                        <li>
+                          <strong>Kurallar:</strong> Zorunluluk,
+                          minimum/maksimum değer, birim, ölçek, kombinasyon
+                          ilişkileri.
+                        </li>
+                        <li>
+                          <strong>Görünürlük:</strong> Her alan için “gizli /
+                          görünür / özel (müşteri bazlı)” seçilebilir.
+                        </li>
+                      </ul>
+                    </div>
+                  </details>
+
+                  <details id="urun-karti-ozel">
+                    <summary>3.1.3.3 Özel Değerler (Müşteri Bazlı)</summary>
+                    <div class="content">
+                      <ul>
+                        <li>
+                          <strong>Fiyat Farklılaştırma:</strong> Belirli
+                          firmalara özel fiyat tanımlanabilir.
+                        </li>
+                        <li>
+                          <strong>Stok Görünürlüğü:</strong> Firma bazında
+                          aç/kapa yapılabilir.
+                        </li>
+                        <li>
+                          <strong>Alan Özelleştirme:</strong> Belirli firmalar
+                          için belirli alanların görünürlüğü değiştirilebilir.
+                        </li>
+                      </ul>
+                    </div>
+                  </details>
+
+                  <details id="urun-karti-akis">
+                    <summary>3.1.3.4 Oluşturma / Düzenleme Akışı</summary>
+                    <div class="content">
+                      <ol>
+                        <li>
+                          Temel bilgileri gir (isim, kategori, kapak görseli).
+                        </li>
+                        <li>
+                          Seçenek alanlarını oluştur (varyant, ölçü, fiyat, stok
+                          vb.).
+                        </li>
+                        <li>
+                          Her alan için görünürlük modu belirle (varsayılan:
+                          <u>gizli</u>).
+                        </li>
+                        <li>
+                          Özel müşteri ayarlarını tanımla (fiyat, stok,
+                          görünürlük vb.).
+                        </li>
+                        <li>Ürünü yayınla veya özel olarak görünür bırak.</li>
+                      </ol>
+                    </div>
+                  </details>
+                </div>
+              </details>
+            </div>
+          </details>
+          <!-- 3.2 -->
+          <details id="siparisler" open>
+            <summary>3.2 Siparişler</summary>
+            <div class="content">
+              <!-- 3.2.1 Alıcı Siparişleri -->
+              <details id="alici-siparisleri" open>
+                <summary>3.2.1 Alıcı Siparişleri</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Sipariş Yapısı:</strong> Tek bir sipariş birden
+                      fazla firma ve üründen oluşabilir.
+                    </li>
+                    <li>
+                      <strong>Notlar:</strong> Sipariş sırasında birden fazla
+                      firmaya ayrı ayrı not eklenebilir.
+                    </li>
+                    <li>
+                      <strong>Teslim Adresleri:</strong> Siparişler teslim
+                      adresi belirtilerek oluşturulmalıdır.
+                    </li>
+                    <li>
+                      <strong>Sepet Düzenleme:</strong> Ürünler sepete
+                      eklendikten sonra onaydan önce düzenlenebilir.
+                    </li>
+                    <li>
+                      <strong>Sipariş Numarası:</strong> Her sipariş tekil bir
+                      numara taşır; iletişim/çözüm süreçleri bu numara üzerinden
+                      yürütülür.
+                    </li>
+                    <li>
+                      <strong>Durumlar:</strong> Siparişler aşağıdaki durumlara
+                      göre listelenir ve filtrelenir:
+                      <ul>
+                        <li>Sipariş onay bekliyor</li>
+                        <li>Onaylandı</li>
+                        <li>Hazırlanıyor</li>
+                        <li>Teslimatta</li>
+                        <li>Teslim edildi</li>
+                      </ul>
+                    </li>
+                    <li>
+                      <strong>Ödemesiz Akış:</strong> Satın alma işlemi yapmak
+                      zorunlu değildir; ödeme modülleri isteğe bağlıdır.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <!-- 3.2.2 Satıcı Siparişleri -->
+              <details id="satici-siparisleri">
+                <summary>3.2.2 Satıcı Siparişleri</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Gelen Siparişler:</strong> Satıcı kendisine gelen
+                      siparişleri listeler, aynı durum akışlarını görüntüler.
+                    </li>
+                    <li>
+                      <strong>Personel Yönlendirme:</strong> Satın alınmış
+                      modüller varsa siparişi personele atama, yetkilendirme ve
+                      iş akışı yönetimi yapılabilir.
+                    </li>
+                    <li>
+                      <strong>Fiyat/Stok Görünümü:</strong> Alıcı tarafında
+                      gizli olsa da satıcı, siparişe konu ürünlerin fiyat ve
+                      stok bilgilerini görür.
+                    </li>
+                    <li>
+                      <strong>Düzeltmeler:</strong> Satıcı, yetkisine bağlı
+                      olarak fiyat/iskonto ve stok düzeltmesi yapabilir; yapılan
+                      değişiklikler kayıt altına alınır.
+                    </li>
+                    <li>
+                      <strong>Durum Yönetimi:</strong> Sipariş durumlarını “onay
+                      bekliyor → onaylandı → hazırlanıyor → teslimatta → teslim
+                      edildi” akışında güncelleyebilir.
+                    </li>
+                    <li>
+                      <strong>Modüler Ödeme/Belge:</strong> İsteğe bağlı
+                      modüller entegre edilebilir (kredi kartı ödemesi, fatura
+                      girişi vb.).
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
+        </div>
+      </details>
+      <a href="Demo/index.html" target="_blank">Demo için buraya tıklayın</a>
+    </main>
+  </body>
+</html>
