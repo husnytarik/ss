@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Siparişler</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script type="module">
+      import {
+        qs,
+        qsa,
+        downloadCSV,
+        fmtDate,
+        textMatch,
+      } from "./assets/app.js";
+      import { orders, suppliers } from "./data/mock.js";
+
+      const STATUSES = [
+        "Sipariş onay bekliyor",
+        "Onaylandı",
+        "Hazırlanıyor",
+        "Teslimatta",
+        "Teslim edildi",
+      ];
+
+      function renderTable(target, data) {
+        target.innerHTML = `
+    <table class="table">
+      <thead><tr><th>No</th><th>Tarih</th><th>Firmalar</th><th>Durum</th><th>Adres</th></tr></thead>
+      <tbody>
+        ${data
+          .map(
+            (o) => `
+          <tr>
+            <td>${o.id}</td>
+            <td>${fmtDate(o.date)}</td>
+            <td>${o.suppliers
+              .map((id) => suppliers.find((s) => s.id === id)?.name || id)
+              .join(", ")}</td>
+            <td><span class="status">${o.status}</span></td>
+            <td class="small">${o.deliveryAddress || ""}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+      }
+
+      function toCSVRows(data) {
+        const head = ["id", "date", "suppliers", "status", "deliveryAddress"];
+        const rows = [head];
+        data.forEach((o) => {
+          rows.push([
+            o.id,
+            fmtDate(o.date),
+            o.suppliers.join("|"),
+            o.status,
+            o.deliveryAddress || "",
+          ]);
+        });
+        return rows;
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const tabBuyer = qs("#tab-buyer"),
+          tabSeller = qs("#tab-seller");
+        const buyerPane = qs("#pane-buyer"),
+          sellerPane = qs("#pane-seller");
+
+        function activate(which) {
+          qsa(".tab").forEach((t) => t.classList.remove("active"));
+          qsa(".pane").forEach((p) => (p.style.display = "none"));
+          if (which === "buyer") {
+            tabBuyer.classList.add("active");
+            buyerPane.style.display = "block";
+          } else {
+            tabSeller.classList.add("active");
+            sellerPane.style.display = "block";
+          }
+        }
+        tabBuyer.addEventListener("click", () => activate("buyer"));
+        tabSeller.addEventListener("click", () => activate("seller"));
+        activate("buyer");
+
+        // Alıcı filtreleri
+        const bFrom = qs("#bFrom"),
+          bTo = qs("#bTo"),
+          bQ = qs("#bQ"),
+          bStatus = qs("#bStatus");
+        const bOut = qs("#bOut");
+
+        function filterBuyer() {
+          const f = bFrom.value,
+            t = bTo.value,
+            q = bQ.value.trim().toLowerCase(),
+            s = bStatus.value;
+          let data = orders.slice();
+          if (f) data = data.filter((o) => new Date(o.date) >= new Date(f));
+          if (t) data = data.filter((o) => new Date(o.date) <= new Date(t));
+          if (q)
+            data = data.filter(
+              (o) =>
+                textMatch(o.id, q) || o.suppliers.some((id) => textMatch(id, q))
+            );
+          if (s) data = data.filter((o) => o.status === s);
+          renderTable(bOut, data);
+          return data;
+        }
+        [bFrom, bTo, bQ, bStatus].forEach((el) =>
+          el.addEventListener("input", filterBuyer)
+        );
+        qs("#bCSV").addEventListener("click", () =>
+          downloadCSV("siparisler_buyer.csv", toCSVRows(filterBuyer()))
+        );
+        // Başlangıç durum
+        bStatus.innerHTML =
+          `<option value="">Durum</option>` +
+          STATUSES.map((s) => `<option>${s}</option>`).join("");
+        filterBuyer();
+
+        // Satıcı paneli (aynı veri, demo amaçlı)
+        const sFrom = qs("#sFrom"),
+          sTo = qs("#sTo"),
+          sQ = qs("#sQ"),
+          sStatus = qs("#sStatus");
+        const sOut = qs("#sOut");
+        function filterSeller() {
+          const f = sFrom.value,
+            t = sTo.value,
+            q = sQ.value.trim().toLowerCase(),
+            s = sStatus.value;
+          let data = orders.slice();
+          if (f) data = data.filter((o) => new Date(o.date) >= new Date(f));
+          if (t) data = data.filter((o) => new Date(o.date) <= new Date(t));
+          if (q)
+            data = data.filter(
+              (o) =>
+                textMatch(o.id, q) || o.suppliers.some((id) => textMatch(id, q))
+            );
+          if (s) data = data.filter((o) => o.status === s);
+          renderTable(sOut, data);
+          return data;
+        }
+        [sFrom, sTo, sQ, sStatus].forEach((el) =>
+          el.addEventListener("input", filterSeller)
+        );
+        qs("#sCSV").addEventListener("click", () =>
+          downloadCSV("siparisler_seller.csv", toCSVRows(filterSeller()))
+        );
+        sStatus.innerHTML =
+          `<option value="">Durum</option>` +
+          STATUSES.map((s) => `<option>${s}</option>`).join("");
+        filterSeller();
+      });
+    </script>
+  </head>
+  <body>
+    <header><h1>Siparişler</h1></header>
+    <main class="main">
+      <div class="tabs">
+        <button class="tab active" id="tab-buyer">Alıcı</button>
+        <button class="tab" id="tab-seller">Satıcı</button>
+      </div>
+
+      <section class="pane" id="pane-buyer">
+        <div class="toolbar">
+          <input id="bFrom" type="date" class="input" />
+          <input id="bTo" type="date" class="input" />
+          <input id="bQ" class="input" placeholder="Sipariş no / firma" />
+          <select id="bStatus" class="select"></select>
+          <button id="bCSV" class="btn">CSV İndir</button>
+          <a class="btn" href="index.html">← Belge</a>
+        </div>
+        <div id="bOut"></div>
+      </section>
+
+      <section class="pane" id="pane-seller" style="display: none">
+        <div class="toolbar">
+          <input id="sFrom" type="date" class="input" />
+          <input id="sTo" type="date" class="input" />
+          <input id="sQ" class="input" placeholder="Sipariş no / firma" />
+          <select id="sStatus" class="select"></select>
+          <button id="sCSV" class="btn">CSV İndir</button>
+          <a class="btn" href="index.html">← Belge</a>
+        </div>
+        <div id="sOut"></div>
+      </section>
+    </main>
+  </body>
+</html>

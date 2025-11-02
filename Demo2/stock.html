@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stok Ekranı</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script type="module">
+      import {
+        qs,
+        qsa,
+        fmtDate,
+        downloadCSV,
+        textMatch,
+      } from "./assets/app.js";
+      import { suppliers, stockMovements } from "./data/mock.js";
+
+      let threshold = 10; // demo eşik
+      // Basit flat liste (ürün seçenek bazında)
+      function flatten() {
+        const rows = [];
+        suppliers.forEach((s) => {
+          s.products.forEach((p) => {
+            p.options.forEach((o) => {
+              rows.push({
+                supplier: s.name,
+                product: p.name,
+                option: o.name,
+                unit: o.unit || "",
+                stock: o.stock ?? 0,
+              });
+            });
+          });
+        });
+        return rows;
+      }
+      let FLAT = flatten();
+
+      function renderTable() {
+        const out = qs("#out");
+        const rows = FLAT.slice();
+        const q = qs("#q").value.trim().toLowerCase();
+        const warn = qs("#warnOnly").checked;
+
+        const filt = rows.filter(
+          (r) =>
+            (!q ||
+              textMatch(r.product, q) ||
+              textMatch(r.option, q) ||
+              textMatch(r.supplier, q)) &&
+            (!warn || r.stock < threshold)
+        );
+
+        out.innerHTML = `
+    <table class="table">
+      <thead><tr>
+        <th>Tedarikçi</th><th>Ürün</th><th>Seçenek</th><th>Birim</th>
+        <th>Stok</th><th style="width:220px">İşlem</th>
+      </tr></thead>
+      <tbody>
+        ${filt
+          .map(
+            (r, i) => `
+          <tr>
+            <td>${r.supplier}</td>
+            <td>${r.product}</td>
+            <td>${r.option}</td>
+            <td>${r.unit}</td>
+            <td style="${
+              r.stock < threshold ? "color:#b00000;font-weight:600" : ""
+            }">${r.stock}</td>
+            <td class="row-actions">
+              <input id="chg_${i}" class="input" type="number" placeholder="+/-" style="width:90px">
+              <input id="why_${i}" class="input" placeholder="Not" style="width:120px">
+              <button class="btn" onclick="window.applyChg(${i})">Uygula</button>
+            </td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+      }
+
+      window.applyChg = (idx) => {
+        const chg = Number(qs("#chg_" + idx).value || 0);
+        const why = qs("#why_" + idx).value || "";
+        if (!chg) return alert("Değişim değeri girin (+/-).");
+        FLAT[idx].stock += chg;
+        // demo: hareket kaydı listesine ekle
+        stockMovements.push({
+          date: fmtDate(new Date()),
+          product: `${FLAT[idx].product} / ${FLAT[idx].option}`,
+          change: chg,
+          reason: why,
+          user: "demo",
+        });
+        renderTable();
+      };
+
+      function renderHistory() {
+        const hFrom = qs("#hFrom").value,
+          hTo = qs("#hTo").value;
+        const rows = stockMovements.filter((m) => {
+          const d = new Date(m.date);
+          return (
+            (!hFrom || d >= new Date(hFrom)) && (!hTo || d <= new Date(hTo))
+          );
+        });
+        const out = qs("#hist");
+        out.innerHTML = `
+    <table class="table">
+      <thead><tr><th>Tarih</th><th>Ürün/Seçenek</th><th>Değişim</th><th>Neden</th><th>Kullanıcı</th></tr></thead>
+      <tbody>${rows
+        .map(
+          (m) => `
+        <tr><td>${fmtDate(m.date)}</td><td>${m.product}</td><td>${
+            m.change
+          }</td><td>${m.reason || ""}</td><td>${m.user || ""}</td></tr>
+      `
+        )
+        .join("")}</tbody>
+    </table>
+  `;
+        qs("#histCsv").onclick = () => {
+          const csv = [
+            ["date", "product", "change", "reason", "user"],
+            ...rows.map((r) => [
+              fmtDate(r.date),
+              r.product,
+              r.change,
+              r.reason || "",
+              r.user || "",
+            ]),
+          ];
+          downloadCSV("stok_hareketleri.csv", csv);
+        };
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        qs("#th").value = threshold;
+        ["q", "warnOnly", "th"].forEach((id) => {
+          qs("#" + id).addEventListener("input", () => {
+            if (id === "th") {
+              threshold = Number(qs("#th").value || 10);
+            }
+            renderTable();
+          });
+        });
+        renderTable();
+
+        ["hFrom", "hTo"].forEach((id) =>
+          qs("#" + id).addEventListener("input", renderHistory)
+        );
+        renderHistory();
+      });
+    </script>
+  </head>
+  <body>
+    <header><h1>Stok Ekranı</h1></header>
+    <main class="main">
+      <section style="margin-bottom: 18px">
+        <div class="toolbar">
+          <input
+            id="q"
+            class="input"
+            placeholder="Ara (tedarikçi/ürün/seçenek)"
+          />
+          <label class="small"
+            ><input type="checkbox" id="warnOnly" /> Eşik altını göster</label
+          >
+          <label class="small"
+            >Eşik:
+            <input
+              id="th"
+              type="number"
+              class="input"
+              value="10"
+              style="width: 90px"
+          /></label>
+          <button
+            class="btn"
+            onclick="alert('Rol bazlı yetki kontrolü (demo)')"
+          >
+            Rol Bilgisi
+          </button>
+          <a class="btn" href="index.html">← Belge</a>
+        </div>
+        <div id="out"></div>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3 style="margin-bottom: 8px; font-size: 16px">
+          Geçmiş Stok Hareketleri
+        </h3>
+        <div class="toolbar">
+          <input id="hFrom" type="date" class="input" />
+          <input id="hTo" type="date" class="input" />
+          <button id="histCsv" class="btn">CSV İndir</button>
+        </div>
+        <div id="hist"></div>
+      </section>
+    </main>
+  </body>
+</html>

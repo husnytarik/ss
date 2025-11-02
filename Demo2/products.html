@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tedarikçi Ürünleri</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script type="module">
+      import { qs, getParam } from "./assets/app.js";
+      import { suppliers } from "./data/mock.js";
+
+      function applyOverrides(prod, viewer) {
+        if (!viewer) return prod;
+        const copy = structuredClone(prod);
+        const ov = copy.overrides?.[viewer];
+        if (!ov) return copy;
+        if (ov.showStock === false) {
+          copy.options = copy.options.map((o) => ({ ...o, stock: undefined }));
+        }
+        if (ov.price) {
+          copy.options = copy.options.map((o) =>
+            ov.price[o.id] != null ? { ...o, price: ov.price[o.id] } : o
+          );
+        }
+        return copy;
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const supplierId = getParam("supplier") || "sup_coffee";
+        const viewer = getParam("viewer"); // firma_y gibi
+        const sup = suppliers.find((s) => s.id === supplierId);
+        const list = qs("#list");
+        qs("#title").textContent = sup ? sup.name : "Tedarikçi";
+
+        if (!sup) {
+          list.innerHTML = '<div class="muted">Tedarikçi bulunamadı.</div>';
+          return;
+        }
+
+        list.innerHTML = sup.products
+          .map((p) => {
+            const pp = applyOverrides(p, viewer);
+            const opts = pp.options.filter((o) => o.visible !== "hidden");
+            return `
+      <article class="card">
+        <h3>${pp.name}</h3>
+        <div class="small muted">Varyantlar</div>
+        <table class="table small">
+          <thead><tr><th>Ad</th><th>Birim</th><th>Fiyat</th><th>Stok</th><th>Adet</th><th></th></tr></thead>
+          <tbody>
+            ${opts
+              .map(
+                (o) => `
+              <tr>
+                <td>${o.name}</td>
+                <td>${o.unit || ""}</td>
+                <td>${o.price != null ? o.price + " ₺" : "—"}</td>
+                <td>${o.stock != null ? o.stock : "—"}</td>
+                <td><input type="number" min="1" value="1" class="input" style="width:80px" id="qty_${
+                  pp.id
+                }_${o.id}"></td>
+                <td><button class="btn" onclick="alert('Sepete eklendi (demo)')">Sepete Ekle</button></td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </article>
+    `;
+          })
+          .join("");
+      });
+    </script>
+  </head>
+  <body>
+    <header><h1 id="title">Tedarikçi</h1></header>
+    <main class="main">
+      <div class="toolbar">
+        <a class="btn" href="suppliers.html">← Tedarikçiler</a>
+        <a class="btn" href="orders.html">Siparişler</a>
+      </div>
+      <section id="list" class="list"></section>
+    </main>
+  </body>
+</html>

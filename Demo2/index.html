@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Demo — Sipariş Platformu</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <style>
+      /* Ana sayfa için çok küçük bir ek düzen */
+      .home-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        margin-top: 12px;
+      }
+      .home-card {
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 16px;
+        text-align: center;
+      }
+      .home-card h2 {
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+      .home-card p {
+        font-size: 13px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header><h1>Demo</h1></header>
+
+    <main class="main">
+      <div class="home-grid">
+        <a class="home-card" href="suppliers.html">
+          <h2>Tedarikçiler</h2>
+          <p>Abone olunan tedarikçiler, arama/filtre ve yeni tedarikçi keşfi</p>
+        </a>
+
+        <a
+          class="home-card"
+          href="products.html?supplier=sup_coffee&viewer=firma_y"
+        >
+          <h2>Ürünler</h2>
+          <p>
+            Tedarikçi ürünleri, seçenek/fiyat/stok görünürlüğü (özel değer
+            kuralları)
+          </p>
+        </a>
+
+        <a class="home-card" href="orders.html">
+          <h2>Siparişler</h2>
+          <p>Alıcı/Satıcı sekmeleri, durumlar, tarih aralığı ve CSV indirme</p>
+        </a>
+
+        <a class="home-card" href="stock.html">
+          <h2>Stok</h2>
+          <p>Metin liste, eşik uyarısı, artır/azalt ve geçmiş hareketler</p>
+        </a>
+      </div>
+    </main>
+  </body>
+</html>

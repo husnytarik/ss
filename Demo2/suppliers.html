@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tedarikçilerim</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script type="module">
+      import { qs, qsa, textMatch } from "./assets/app.js";
+      import { suppliers } from "./data/mock.js";
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const list = qs("#list");
+        const q = qs("#q");
+        const cat = qs("#cat");
+        const reg = qs("#reg");
+
+        // Kategori & bölge seçenekleri
+        const cats = new Set(),
+          regs = new Set();
+        suppliers.forEach((s) => {
+          s.categories.forEach((c) => cats.add(c));
+          s.regions.forEach((r) => regs.add(r));
+        });
+        cat.innerHTML =
+          `<option value="">Kategori</option>` +
+          [...cats].map((c) => `<option>${c}</option>`).join("");
+        reg.innerHTML =
+          `<option value="">Bölge</option>` +
+          [...regs].map((r) => `<option>${r}</option>`).join("");
+
+        function render() {
+          const term = q.value.trim().toLowerCase();
+          const cf = cat.value,
+            rf = reg.value;
+          const items = suppliers.filter(
+            (s) =>
+              (!term || textMatch(s.name, term) || textMatch(s.slogan, term)) &&
+              (!cf || s.categories.includes(cf)) &&
+              (!rf || s.regions.includes(rf))
+          );
+
+          list.innerHTML =
+            items
+              .map(
+                (s) => `
+      <article class="card">
+        <h3>${s.name}</h3>
+        <div class="small muted">${s.slogan || ""}</div>
+        <div class="small">Merkez: ${s.hq} • Bölgeler: ${s.regions.join(
+                  ", "
+                )}</div>
+        <div class="small">Kategoriler: ${s.categories
+          .map((c) => `<span class="badge">${c}</span>`)
+          .join("")}</div>
+        <p class="small" style="margin-top:6px">${(s.about || "").slice(
+          0,
+          120
+        )}${(s.about || "").length > 120 ? "…" : ""}</p>
+        <div class="row-actions" style="margin-top:8px">
+          <a class="btn" href="products.html?supplier=${s.id}">Ürünleri Gör</a>
+          <button class="btn" onclick="alert('Abonelik isteği gönderildi (demo)')">Abone Ol</button>
+          <button class="btn" onclick="alert('İletişim talebi gönderildi (demo)')">İletişime Geç</button>
+        </div>
+      </article>
+    `
+              )
+              .join("") || `<div class="muted">Sonuç bulunamadı.</div>`;
+        }
+
+        q.addEventListener("input", render);
+        cat.addEventListener("change", render);
+        reg.addEventListener("change", render);
+        render();
+      });
+    </script>
+  </head>
+  <body>
+    <header><h1>Tedarikçilerim</h1></header>
+    <main class="main">
+      <div class="toolbar">
+        <input id="q" class="input" placeholder="Ara (isim, slogan)" />
+        <select id="cat" class="select"></select>
+        <select id="reg" class="select"></select>
+        <a class="btn" href="index.html">← Belge</a>
+      </div>
+      <section id="list" class="list"></section>
+    </main>
+  </body>
+</html>

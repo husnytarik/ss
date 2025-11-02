@@ -423,6 +423,37 @@
                   </ul>
                 </div>
               </details>
+              <!-- 3.2.3 -->
+              <details id="gecmis-siparisler" open>
+                <summary>3.2.3 Geçmiş Siparişler</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Tarih Aralığı:</strong> Kullanıcı, başlangıç ve
+                      bitiş tarihi seçerek geçmiş siparişlerini filtreleyebilir.
+                    </li>
+                    <li>
+                      <strong>Filtreler:</strong> Firma, sipariş durumu, ürün
+                      kategorisi veya ödeme tipi gibi ek filtreler
+                      uygulanabilir.
+                    </li>
+                    <li>
+                      <strong>Görüntüleme:</strong> Seçilen tarih aralığındaki
+                      siparişler tablo biçiminde listelenir; her satırda sipariş
+                      numarası, tarih, firma(lar) ve durum bilgisi yer alır.
+                    </li>
+                    <li>
+                      <strong>İndirme:</strong> Geçmiş siparişler CSV veya Excel
+                      formatında dışa aktarılabilir.
+                    </li>
+                    <li>
+                      <strong>Yetkiler:</strong> Bu özelliğe erişim ve dışa
+                      aktarma yetkisi, rol bazlı olarak (yönetici/satın
+                      alma/personel) sınırlandırılabilir.
+                    </li>
+                  </ul>
+                </div>
+              </details>
             </div>
           </details>
           <!-- 3.3 -->
@@ -547,9 +578,123 @@
               </details>
             </div>
           </details>
+          <!-- 3.4 -->
+          <details id="stok-ekrani" open>
+            <summary>3.4 Stok Ekranı</summary>
+            <div class="content">
+              <details id="stok-listeleme" open>
+                <summary>3.4.1 Listeleme</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Metin Liste:</strong> Tüm ürünler; <u>isim</u>,
+                      <u>seçenek (varyant/ölçü vb.)</u> ve
+                      <u>stok miktarı</u> sütunlarıyla alt alta, sade metin
+                      olarak listelenir.
+                    </li>
+                    <li>
+                      <strong>Seçenek Bazı:</strong> Her ürün seçeneği ayrı
+                      satır olarak görüntülenir (ürün → seçenek → stok).
+                    </li>
+                    <li>
+                      <strong>Arama/Filtre:</strong> Ürün adı, kategori,
+                      tedarikçi, görünürlük vb. filtrelerle daraltılabilir.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="stok-esik" open>
+                <summary>3.4.2 Eşik Değeri &amp; Bildirim</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Eşik Değeri:</strong> Stok için bir eşik değeri
+                      tanımlanır (ürün veya seçenek düzeyinde).
+                    </li>
+                    <li>
+                      <strong>Uyarı:</strong> Stok eşik değerinin altına
+                      düştüğünde bildirim tetiklenir.
+                    </li>
+                    <li>
+                      <strong>Bildirim Kanalları:</strong> Uygulama içi
+                      bildirim; isteğe bağlı e-posta/push entegrasyonu.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="stok-islemleri" open>
+                <summary>3.4.3 Stok İşlemleri</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Artır/Azalt:</strong> Stok miktarları bu ekrandan
+                      arttırılıp azaltılabilir.
+                    </li>
+                    <li>
+                      <strong>Toplu Güncelleme:</strong> Birden fazla satıra
+                      aynı anda işlem uygulanabilir.
+                    </li>
+                    <li>
+                      <strong>Nedeni/Zorunlu Not:</strong> Her işlem için
+                      açıklama alanı bulunur (ör. sayım düzeltmesi, iade, üretim
+                      girişi).
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="stok-roller" open>
+                <summary>3.4.4 Rol &amp; Yetkiler</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Görüntüleme / Düzenleme:</strong> Role göre
+                      yalnızca görüntüleme veya düzenleme yetkisi verilir.
+                    </li>
+                    <li>
+                      <strong>İz Kayıtları:</strong> Yapılan stok değişiklikleri
+                      kullanıcı ve zaman bilgisiyle kayda alınır.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+
+              <details id="stok-gecmis" open>
+                <summary>3.4.5 Geçmiş &amp; Raporlama</summary>
+                <div class="content">
+                  <ul>
+                    <li>
+                      <strong>Tarih Aralığı:</strong> Seçilen tarih aralığına
+                      göre stok hareketleri görüntülenebilir.
+                    </li>
+                    <li>
+                      <strong>Filtreler:</strong> Ürün, seçenek, işlem türü ve
+                      kullanıcı filtreleri.
+                    </li>
+                    <li>
+                      <strong>Dışa Aktarım:</strong> İsteğe bağlı CSV/Excel dışa
+                      aktarma desteği.
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
         </div>
       </details>
-      <a href="Demo/index.html" target="_blank">Demo için buraya tıklayın</a>
+
+      <li>
+        <a href="Demo/index.html" target="_blank"
+          >Genel sayfa demosu için buraya tıklayın</a
+        >
+      </li>
+      <li>
+        <a href="Demo2/index.html" target="_blank"
+          >Detaylı demo için buraya tıklayın</a
+        >
+      </li>
     </main>
   </body>
 </html>
